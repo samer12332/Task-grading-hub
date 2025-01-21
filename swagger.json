@@ -9,7 +9,7 @@
       {
         "url": "http://localhost:3000",
         "description": "Production server"
-      }
+      } 
     ],
     "tags": [
       {
@@ -79,7 +79,21 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/ErrorResponse"
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                        "type": "string",
+                        "example": "fail"
+                        },
+                        "message": {
+                        "type": "string",
+                        "example": "User already exists"
+                        },
+                        "code": {
+                        "type": "integer",
+                        "example": 409
+                        }
+                    }
                   }
                 }
               }
@@ -151,7 +165,21 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/ErrorResponse"
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                        "type": "string",
+                        "example": "fail"
+                        },
+                        "message": {
+                        "type": "string",
+                        "example": "Email not found"
+                        },
+                        "code": {
+                        "type": "integer",
+                        "example": 404
+                        }
+                    }
                   }
                 }
               }
@@ -161,7 +189,21 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/ErrorResponse"
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                        "type": "string",
+                        "example": "fail"
+                        },
+                        "message": {
+                        "type": "string",
+                        "example": "Incorrect Password"
+                        },
+                        "code": {
+                        "type": "integer",
+                        "example": 401
+                        }
+                    }
                   }
                 }
               }
@@ -210,7 +252,21 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/ErrorResponse"
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                        "type": "string",
+                        "example": "fail"
+                        },
+                        "message": {
+                        "type": "string",
+                        "example": "User not found"
+                        },
+                        "code": {
+                        "type": "integer",
+                        "example": 404
+                        }
+                    }
                   }
                 }
               }
@@ -275,7 +331,21 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/ErrorResponse"
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                        "type": "string",
+                        "example": "fail"
+                        },
+                        "message": {
+                        "type": "string",
+                        "example": "Unauthorized: Token is missing"
+                        },
+                        "code": {
+                        "type": "integer",
+                        "example": 401
+                        }
+                    }
                   }
                 }
               }
@@ -285,7 +355,21 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/ErrorResponse"
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                        "type": "string",
+                        "example": "fail"
+                        },
+                        "message": {
+                        "type": "string",
+                        "example": "Forbidden: Invalid token"
+                        },
+                        "code": {
+                        "type": "integer",
+                        "example": 403
+                        }
+                    }
                   }
                 }
               }
@@ -379,7 +463,21 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/ErrorResponse"
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                        "type": "string",
+                        "example": "fail"
+                        },
+                        "message": {
+                        "type": "string",
+                        "example": "User not found"
+                        },
+                        "code": {
+                        "type": "integer",
+                        "example": 404
+                        }
+                    }
                   }
                 }
               }
@@ -722,7 +820,21 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/ErrorResponse"
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                        "type": "string",
+                        "example": "fail"
+                        },
+                        "message": {
+                        "type": "string",
+                        "example": "Submission deadline has passed"
+                        },
+                        "code": {
+                        "type": "integer",
+                        "example": 400
+                        }
+                    }
                   }
                 }
               }
@@ -835,7 +947,21 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/ErrorResponse"
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                        "type": "string",
+                        "example": "fail"
+                        },
+                        "message": {
+                        "type": "string",
+                        "example": "Submission not found"
+                        },
+                        "code": {
+                        "type": "integer",
+                        "example": 404
+                        }
+                    }
                   }
                 }
               }
@@ -895,7 +1021,21 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/ErrorResponse"
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                        "type": "string",
+                        "example": "fail"
+                        },
+                        "message": {
+                        "type": "string",
+                        "example": "Submission not found"
+                        },
+                        "code": {
+                        "type": "integer",
+                        "example": 404
+                        }
+                    }
                   }
                 }
               }
@@ -905,7 +1045,21 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/ErrorResponse"
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                        "type": "string",
+                        "example": "fail"
+                        },
+                        "message": {
+                        "type": "string",
+                        "example": "Deadline has passed"
+                        },
+                        "code": {
+                        "type": "integer",
+                        "example": 400
+                        }
+                    }
                   }
                 }
               }
@@ -991,7 +1145,21 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/ErrorResponse"
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                        "type": "string",
+                        "example": "fail"
+                        },
+                        "message": {
+                        "type": "string",
+                        "example": "Submission not found"
+                        },
+                        "code": {
+                        "type": "integer",
+                        "example": 404
+                        }
+                    }
                   }
                 }
               }
@@ -1001,7 +1169,21 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/ErrorResponse"
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                        "type": "string",
+                        "example": "fail"
+                        },
+                        "message": {
+                        "type": "string",
+                        "example": "Grade is already posted"
+                        },
+                        "code": {
+                        "type": "integer",
+                        "example": 400
+                        }
+                    }
                   }
                 }
               }
