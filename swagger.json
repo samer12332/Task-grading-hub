@@ -1,0 +1,1140 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Task and User Management API",
+      "description": "API for managing tasks, submissions, and users.",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:3000",
+        "description": "Production server"
+      }
+    ],
+    "tags": [
+      {
+        "name": "Users",
+        "description": "Endpoints for managing users."
+      },
+      {
+        "name": "Tasks",
+        "description": "Endpoints for managing tasks and submissions."
+      }
+    ],
+    "paths": {
+      "/api/users/register": {
+        "post": {
+          "tags": ["Users"],
+          "summary": "Register a new user",
+          "description": "Creates a new user with the provided details and returns access and refresh tokens.",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "User registered successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "User registered successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "newUser": {
+                            "$ref": "#/components/schemas/User"
+                          },
+                          "accessToken": {
+                            "type": "string",
+                            "description": "JWT access token for authentication."
+                          },
+                          "refreshToken": {
+                            "type": "string",
+                            "description": "JWT refresh token for generating new access tokens."
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "409": {
+              "description": "User already exists",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/users/login": {
+        "post": {
+          "tags": ["Users"],
+          "summary": "Login a user",
+          "description": "Authenticates a user and returns access and refresh tokens.",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "password": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["email", "password"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Login successful",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Login Successful: You have successfully logged in."
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "accessToken": {
+                            "type": "string",
+                            "description": "JWT access token for authentication."
+                          },
+                          "refreshToken": {
+                            "type": "string",
+                            "description": "JWT refresh token for generating new access tokens."
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Email not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Incorrect password",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/users/logout": {
+        "post": {
+          "tags": ["Users"],
+          "summary": "Logout a user",
+          "description": "Logs out a user by revoking their access token and clearing their refresh token.",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Logout successful",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Logged out Successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "nullable": true,
+                        "description": "No data returned."
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "User not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/users/refresh-token": {
+        "post": {
+          "tags": ["Users"],
+          "summary": "Refresh access token",
+          "description": "Generates a new access token using a valid refresh token.",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "description": "The refresh token."
+                    }
+                  },
+                  "required": ["token"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Token refresh successful",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Token Refresh Successful: Your access token has been successfully refreshed."
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "accessToken": {
+                            "type": "string",
+                            "description": "New JWT access token."
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized: Token is missing",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden: Invalid token",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/users": {
+        "get": {
+          "tags": ["Users"],
+          "summary": "Get all users",
+          "description": "Retrieves a list of all users.",
+          "responses": {
+            "200": {
+              "description": "Users retrieved successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "All users retrieved successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "users": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/User"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/users/{id}": {
+        "delete": {
+          "tags": ["Users"],
+          "summary": "Delete a user",
+          "description": "Deletes a user by their ID.",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "User deleted successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "User deleted successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "nullable": true,
+                        "description": "No data returned."
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "User not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/tasks": {
+        "get": {
+          "tags": ["Tasks"],
+          "summary": "Get all tasks",
+          "description": "Retrieves a list of all tasks.",
+          "responses": {
+            "200": {
+              "description": "Tasks retrieved successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Tasks retrieved successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "tasks": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/Task"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["Tasks"],
+          "summary": "Create a new task",
+          "description": "Creates a new task with the provided details.",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Task created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Task created successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "newTask": {
+                            "$ref": "#/components/schemas/Task"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/tasks/{taskId}": {
+        "get": {
+          "tags": ["Tasks"],
+          "summary": "Get a task by ID",
+          "description": "Retrieves a specific task by its ID.",
+          "parameters": [
+            {
+              "name": "taskId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Task retrieved successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Task retrieved successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "task": {
+                            "$ref": "#/components/schemas/Task"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Task not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patch": {
+          "tags": ["Tasks"],
+          "summary": "Update a task",
+          "description": "Updates an existing task by its ID.",
+          "parameters": [
+            {
+              "name": "taskId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Task updated successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Task updated successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "updatedTask": {
+                            "$ref": "#/components/schemas/Task"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Task not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": ["Tasks"],
+          "summary": "Delete a task",
+          "description": "Deletes a task by its ID.",
+          "parameters": [
+            {
+              "name": "taskId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Task deleted successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Task deleted successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "nullable": true,
+                        "description": "No data returned."
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Task not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/tasks/{taskId}/submissions": {
+        "post": {
+          "tags": ["Tasks"],
+          "summary": "Submit a task",
+          "description": "Submits a task with a file upload.",
+          "parameters": [
+            {
+              "name": "taskId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "file": {
+                      "type": "string",
+                      "format": "binary",
+                      "description": "The file to upload."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "File uploaded successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "File uploaded successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "newSubmission": {
+                            "$ref": "#/components/schemas/Submission"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Task not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Submission deadline has passed",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "get": {
+          "tags": ["Tasks"],
+          "summary": "Get all submissions for a task",
+          "description": "Retrieves all submissions for a specific task.",
+          "parameters": [
+            {
+              "name": "taskId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Submissions retrieved successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Submissions retrieved successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "submissions": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/Submission"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/tasks/{taskId}/submissions/{submissionId}": {
+        "get": {
+          "tags": ["Tasks"],
+          "summary": "Get a submission by ID",
+          "description": "Retrieves a specific submission by its ID.",
+          "parameters": [
+            {
+              "name": "taskId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "submissionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Submission retrieved successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Submission retrieved successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "submission": {
+                            "$ref": "#/components/schemas/Submission"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Submission not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": ["Tasks"],
+          "summary": "Delete a submission",
+          "description": "Deletes a submission by its ID.",
+          "parameters": [
+            {
+              "name": "taskId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "submissionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Submission deleted successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Submission deleted successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "nullable": true,
+                        "description": "No data returned."
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Submission not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Deadline has passed",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/tasks/{taskId}/submissions/{submissionId}/grade": {
+        "post": {
+          "tags": ["Tasks"],
+          "summary": "Grade a submission",
+          "description": "Grades a submission and provides feedback.",
+          "parameters": [
+            {
+              "name": "taskId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "submissionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "grade": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "feedback": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["grade"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Grade posted successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Grade posted successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "submission": {
+                            "$ref": "#/components/schemas/Submission"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Submission not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Grade is already posted",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "User": {
+          "type": "object",
+          "properties": {
+            "firstName": {
+              "type": "string",
+              "description": "The first name of the user."
+            },
+            "lastName": {
+              "type": "string",
+              "description": "The last name of the user."
+            },
+            "email": {
+              "type": "string",
+              "format": "email",
+              "description": "The email address of the user."
+            },
+            "password": {
+              "type": "string",
+              "description": "The password of the user."
+            },
+            "refreshToken": {
+              "type": "string",
+              "description": "The refresh token for the user's session."
+            },
+            "role": {
+              "type": "string",
+              "enum": ["ADMIN", "STUDENT"],
+              "description": "The role of the user.",
+              "default": "STUDENT"
+            }
+          },
+          "required": ["firstName", "lastName", "email", "password"]
+        },
+        "Task": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "The title of the task."
+            },
+            "description": {
+              "type": "string",
+              "description": "The description of the task."
+            },
+            "deadline": {
+              "type": "string",
+              "format": "date-time",
+              "description": "The deadline for the task."
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time",
+              "description": "The date and time when the task was created."
+            }
+          },
+          "required": ["title"]
+        },
+        "Submission": {
+          "type": "object",
+          "properties": {
+            "taskId": {
+              "type": "string",
+              "description": "The ID of the task associated with the submission."
+            },
+            "userId": {
+              "type": "string",
+              "description": "The ID of the user who submitted the task."
+            },
+            "userEmail": {
+              "type": "string",
+              "format": "email",
+              "description": "The email of the user who submitted the task."
+            },
+            "filePath": {
+              "type": "string",
+              "description": "The file path of the submitted task."
+            },
+            "fileName": {
+              "type": "string",
+              "description": "The name of the submitted file."
+            },
+            "submissionDate": {
+              "type": "string",
+              "format": "date-time",
+              "description": "The date and time when the task was submitted."
+            },
+            "grade": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "The grade assigned to the submission."
+            },
+            "feedback": {
+              "type": "string",
+              "description": "Feedback provided for the submission."
+            }
+          },
+          "required": ["taskId", "userId", "userEmail", "fileName"]
+        },
+        "ErrorResponse": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "fail"
+            },
+            "message": {
+              "type": "string",
+              "example": "Task not found"
+            },
+            "code": {
+              "type": "integer",
+              "example": 404
+            }
+          }
+        }
+      },
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    }
+  }
